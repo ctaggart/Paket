@@ -128,7 +128,7 @@ Target "CleanDocs" (fun _ ->
 
 Target "Build" (fun _ ->
     !! solutionFile
-    |> MSBuildRelease "" "Rebuild"
+    |> MSBuildDebug "" "Rebuild"
     |> ignore
 )
 
@@ -144,7 +144,7 @@ Target "BuildPowerShell" (fun _ ->
         if result <> 0 then failwithf "Error copying System.Management.Automation.dll"
 
     !! solutionFilePowerShell
-    |> MSBuildRelease "" "Rebuild"
+    |> MSBuildDebug "" "Rebuild"
     |> ignore
 )
 
@@ -184,7 +184,8 @@ Target "MergePowerShell" (fun _ ->
     CreateDir buildMergedDir
 
     let toPack =
-        ["paket.exe"; "Paket.Core.dll"; "FSharp.Core.dll"; "Newtonsoft.Json.dll"; "UnionArgParser.dll"; "Paket.PowerShell.dll"]
+        [   "paket.exe"; "Paket.Core.dll"; "FSharp.Core.dll"; "Newtonsoft.Json.dll"; "UnionArgParser.dll"; "Paket.PowerShell.dll"
+            "System.Reactive.Interfaces.dll"; "System.Reactive.Core.dll"; "System.Reactive.Linq.dll" ]
         |> List.map (fun l -> buildDir @@ l)
         |> separated " "
 
@@ -377,9 +378,9 @@ Target "All" DoNothing
   ==> "AssemblyInfo"
   ==> "Build"
   =?> ("BuildPowerShell", not isMono)
-  ==> "RunTests"
-  =?> ("GenerateReferenceDocs",isLocalBuild && not isMono)
-  =?> ("GenerateDocs",isLocalBuild && not isMono)
+//  ==> "RunTests"
+//  =?> ("GenerateReferenceDocs",isLocalBuild && not isMono)
+//  =?> ("GenerateDocs",isLocalBuild && not isMono)
   ==> "All"
   =?> ("ReleaseDocs",isLocalBuild && not isMono)
 

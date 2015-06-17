@@ -5,6 +5,9 @@ open System.Management.Automation
 open System
 open System.Diagnostics
 open Paket
+open System.Reactive.Linq
+open System.Reactive.Concurrency
+open System.Threading
 
 // add F# printf write extensions
 type Cmdlet with
@@ -44,13 +47,15 @@ type PSCmdlet with
 
     member x.RegisterTrace() =
         Logging.verbose <- x.Verbose
-        let id = Threading.Thread.CurrentThread.ManagedThreadId
-        Logging.subscribe (fun trace ->
-            if id = Threading.Thread.CurrentThread.ManagedThreadId then
-                match trace.Level with
-                | TraceLevel.Warning -> x.WriteWarning trace.Text
-                | TraceLevel.Error -> x.WriteWarning trace.Text
-                | _ -> x.WriteObject trace.Text
-            else
-                Diagnostics.Debug.Write(sprintf "not on main PS thread: %A" trace)
+        let a = Threading.Thread.CurrentThread.ManagedThreadId
+        let ctx = match SynchronizationContext.Current with null -> SynchronizationContext() | sc -> sc
+        let sch = SynchronizationContextScheduler ctx
+        Logging.event.Publish.ObserveOn sch
+        |> Observable.subscribe (fun trace ->
+            let b = Threading.Thread.CurrentThread.ManagedThreadId
+//            match trace.Level with
+//            | TraceLevel.Warning -> x.WriteWarning trace.Text
+//            | TraceLevel.Error -> x.WriteWarning trace.Text
+//            | _ -> x.WriteObject trace.Text
+            Debug.WriteLine(sprintf "%d %d %s" a b trace.Text)
         )

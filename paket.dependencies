@@ -8,6 +8,8 @@ nuget FAKE
 nuget FSharp.Formatting
 nuget FSharp.Core
 nuget ILRepack
+nuget Rx-Core
+nuget Rx-Linq
 
 github forki/FsUnit FsUnit.fs
 github fsharp/FAKE modules/Octokit/Octokit.fsx
