@@ -48,7 +48,13 @@ type PSCmdlet with
     member x.RegisterTrace() =
         Logging.verbose <- x.Verbose
         let a = Threading.Thread.CurrentThread.ManagedThreadId
-        let ctx = match SynchronizationContext.Current with null -> SynchronizationContext() | sc -> sc
+        let ctx = 
+            match SynchronizationContext.Current with
+            |null -> 
+                let sc = SynchronizationContext()
+                SynchronizationContext.SetSynchronizationContext sc
+                sc
+            | sc -> sc
         let sch = SynchronizationContextScheduler ctx
         Logging.event.Publish.ObserveOn sch
         |> Observable.subscribe (fun trace ->
