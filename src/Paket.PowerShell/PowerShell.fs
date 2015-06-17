@@ -20,7 +20,8 @@ type Add() =
     [<Parameter>] member val NoInstall = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<AddArgs>()
         seq {
@@ -42,6 +43,8 @@ type Add() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.add
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "AutoRestore")>]
 type AutoRestoreCmdlet() =   
@@ -51,7 +54,8 @@ type AutoRestoreCmdlet() =
     [<Parameter>] member val Off = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<AutoRestoreArgs>()
         seq {
@@ -63,6 +67,8 @@ type AutoRestoreCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.autoRestore
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Config")>]
 type ConfigCmdlet() =   
@@ -71,7 +77,8 @@ type ConfigCmdlet() =
     [<Parameter>] member val AddCredentials = "" with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<ConfigArgs>()
         seq {
@@ -81,6 +88,8 @@ type ConfigCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.config
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "ConvertFromNuGet")>]
 type ConvertFromNuGetCmdlet() =   
@@ -93,7 +102,8 @@ type ConvertFromNuGetCmdlet() =
     [<Parameter>] member val CredsMigration = "encrypt" with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<ConvertFromNugetArgs>()
         seq {
@@ -109,6 +119,8 @@ type ConvertFromNuGetCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.convert
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "FindRefs")>]
 type FindRefsCmdlet() =
@@ -117,7 +129,8 @@ type FindRefsCmdlet() =
     [<Parameter>] member val NuGet : string[] = Array.empty with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<FindRefsArgs>()
         seq {
@@ -127,6 +140,8 @@ type FindRefsCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.findRefs
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "FindPackages")>]
 type FindPackagesCmdlet() =   
@@ -138,7 +153,8 @@ type FindPackagesCmdlet() =
     [<Parameter>] member val Silent = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<FindPackagesArgs>()
         seq {
@@ -154,6 +170,8 @@ type FindPackagesCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.findPackages
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "FindPackageVersions")>]
 type FindPackageVersionsCmdlet() =   
@@ -165,7 +183,8 @@ type FindPackageVersionsCmdlet() =
     [<Parameter>] member val Silent = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<FindPackageVersionsArgs>()
         seq {
@@ -181,13 +200,16 @@ type FindPackageVersionsCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.findPackageVersions
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Init")>]
 type InitCmdlet() =
     inherit PSCmdlet()
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<InitArgs>()
         List.empty
@@ -203,7 +225,8 @@ type InstallCmdlet() =
     [<Parameter>] member val Redirects = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<InstallArgs>()
         seq {
@@ -217,6 +240,8 @@ type InstallCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.install
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Outdated")>]
 type OutdatedCmdlet() =   
@@ -226,7 +251,8 @@ type OutdatedCmdlet() =
     [<Parameter>] member val IncludePrereleases = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<OutdatedArgs>()
         seq {
@@ -238,6 +264,8 @@ type OutdatedCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.outdated
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Push")>]
 type PushCmdlet() =   
@@ -249,7 +277,8 @@ type PushCmdlet() =
     [<Parameter>] member val Endpoint = "" with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<PushArgs>()
         seq {
@@ -265,6 +294,8 @@ type PushCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.push
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Remove")>]
 type RemoveCmdlet() =   
@@ -278,7 +309,8 @@ type RemoveCmdlet() =
     [<Parameter>] member val NoInstall = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<RemoveArgs>()
         seq {
@@ -298,6 +330,8 @@ type RemoveCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.remove
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Restore")>]
 type RestoreCmdlet() =
@@ -307,7 +341,8 @@ type RestoreCmdlet() =
     [<Parameter>] member val ReferencesFiles = Array.empty<string> with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<RestoreArgs>()
         seq {
@@ -319,6 +354,8 @@ type RestoreCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.restore
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Simplify")>]
 type SimplifyCmdlet() =
@@ -327,7 +364,8 @@ type SimplifyCmdlet() =
     [<Parameter>] member val Interactive = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<SimplifyArgs>()
         seq {
@@ -337,6 +375,8 @@ type SimplifyCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.simplify
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "ShowInstalledPackages")>]
 type ShowInstalledPackagesCmdlet() =   
@@ -347,7 +387,8 @@ type ShowInstalledPackagesCmdlet() =
     [<Parameter>] member val Silent = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<ShowInstalledPackagesArgs>()
         seq {
@@ -361,6 +402,8 @@ type ShowInstalledPackagesCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.showInstalledPackages
+        ctx.Complete()
+        ctx.Run()
 
 [<Cmdlet("Paket", "Update")>]
 type UpdateCmdlet() =   
@@ -373,7 +416,8 @@ type UpdateCmdlet() =
     [<Parameter>] member val Redirects = SwitchParameter() with get, set
 
     override x.ProcessRecord() =
-        use trc = x.RegisterTrace()
+        use ctx = new QueuingSynchronizationContext()
+        use trc = x.RegisterTrace ctx
         x.SetCurrentDirectoryToLocation()
         let parser = UnionArgParser.Create<UpdateArgs>()
         seq {
@@ -391,3 +435,5 @@ type UpdateCmdlet() =
         |> List.ofSeq
         |> parser.CreateParseResultsOfList
         |> Program.update
+        ctx.Complete()
+        ctx.Run()

@@ -25,15 +25,45 @@ type Microsoft.FSharp.Control.Async with
             and remover : IDisposable  = ev1.Subscribe(callback) 
             () )))
 
+
+// http://blogs.msdn.com/b/pfxteam/archive/2012/01/20/10259049.aspx
+open System.Collections.Concurrent
+open System.Collections.Generic
+
+type QueuingSynchronizationContext() =
+    inherit SynchronizationContext()
+
+    let threadId = Thread.CurrentThread.ManagedThreadId
+
+    let queue = new BlockingCollection<_>()
+
+    override __.Post(cb, state) =
+        queue.Add(KeyValuePair(cb,state))
+
+    member __.ThreadId = threadId
+
+    member __.Run() =
+        let mutable workItem = Unchecked.defaultof<_>
+        while queue.TryTake(&workItem, Timeout.Infinite) do
+            workItem.Key.Invoke workItem.Value
+
+    member __.Complete() =
+        queue.CompleteAdding()
+
+    interface IDisposable with 
+        member x.Dispose() =
+            use q = queue
+            ()
+
+
 type IObservable<'T> with
     /// Subscribes on a specific SynchronizationContext. All notifications are sent using the context.
-    member source.SubscribeOn context = 
-        assert (context <> null)
+    member source.SubscribeOn (context: QueuingSynchronizationContext) = 
         {
             new IObservable<_> with
                 member __.Subscribe observer = 
                     let invoke f = 
-                        if SynchronizationContext.Current = context 
+                        if context.ThreadId = Thread.CurrentThread.ManagedThreadId 
                         then f() 
 //                        else context.Send(SendOrPostCallback(fun _ -> f()), null)
                         else context.Post(SendOrPostCallback(fun _ -> f()), null)

@@ -37,7 +37,7 @@ val event : Event<Trace>
 
 val subscribe : (Trace -> unit) -> IDisposable
 
-val subscribeOn : SynchronizationContext -> (Trace -> unit) -> IDisposable
+val subscribeOn : QueuingSynchronizationContext -> (Trace -> unit) -> IDisposable
 
 val traceToConsole : Trace -> unit
 
