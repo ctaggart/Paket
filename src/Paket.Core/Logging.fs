@@ -19,6 +19,8 @@ let event = Event<Trace>()
 /// [omit]
 let subscribe callback = Observable.subscribe callback event.Publish
 
+/// [omit]
+let subscribeOn ctx callback = Observable.subscribeOn ctx callback event.Publish
 
 /// [omit]
 let tracen s = event.Trigger { Level = TraceLevel.Info; Text = s; NewLine = true }

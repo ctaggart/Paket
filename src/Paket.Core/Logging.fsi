@@ -2,6 +2,7 @@
 
 open System
 open System.Diagnostics
+open System.Threading
 
 val mutable verbose : bool
 
@@ -32,7 +33,11 @@ type Trace = {
     Text: string
     NewLine: bool }
 
+val event : Event<Trace>
+
 val subscribe : (Trace -> unit) -> IDisposable
+
+val subscribeOn : SynchronizationContext -> (Trace -> unit) -> IDisposable
 
 val traceToConsole : Trace -> unit
 

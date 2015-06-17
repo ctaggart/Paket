@@ -300,7 +300,7 @@ type RemoveCmdlet() =
         |> Program.remove
 
 [<Cmdlet("Paket", "Restore")>]
-type RestoreCmdlet() =   
+type RestoreCmdlet() =
     inherit PSCmdlet()
 
     [<Parameter>] member val Force = SwitchParameter() with get, set
